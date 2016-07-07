@@ -1,0 +1,25 @@
+#!/bin/bash
+# 15script
+# This script generates and solves a 15 puzzle [k] moves from the solution.
+# this script limits the solving time to [t] seconds
+# usage: ./15script [k] [t] [config]
+
+if [ "$#" -lt 2 ] ; then
+	echo "Usage: $0 [k] [t] [config]" >&2
+	exit 1
+fi
+
+if [ "$#" -eq 2 ] ; then
+	python 15puzzlegen.py $1 > generated15puzzle.lp
+	./gringo generated15puzzle.lp improved15puzzle.lp | ./clasp --time-limit=$2
+fi
+
+if [ "$#" -eq 3 ] ; then
+	python 15puzzlegen.py $1 > generated15puzzle.lp
+	./gringo generated15puzzle.lp improved15puzzle.lp | ./clasp --time-limit=$2 --configuration=$3
+fi
+
+# sources:
+# http://man7.org/linux/man-pages/man1/timeout.1.html
+# http://tldp.org/HOWTO/Bash-Prog-Intro-HOWTO.html
+# http://stackoverflow.com/questions/4341630/checking-for-the-correct-number-of-arguments

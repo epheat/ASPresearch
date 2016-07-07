@@ -1,0 +1,1 @@
+[solver-iter1]: --sat-p=2,10,25,240 --trans-ext=all --backprop --heuristic=Berkmin,10 --restarts=D,100,0.7 --deletion=sort,50,2 --del-max=200000 --del-init=20.0,1000,14000 --del-cfl=+,4000,600 --del-glue=2 --update-lbd --strengthen=local,2 --otfs=2 --save-p=20 --contraction=600 --loops=distinct --counter-restarts=7 --counter-bump=1023 --reverse-arcs=2

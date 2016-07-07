@@ -1,0 +1,216 @@
+Clasp.Config Options:
+
+  --configuration=<arg>   : Configure default configuration [auto]
+      <arg>: {auto|frumpy|jumpy|tweety|handy|crafty|trendy|many|<file>}
+        auto  : Select configuration based on problem type
+        frumpy: Use conservative defaults
+        jumpy : Use aggressive defaults
+        tweety: Use defaults geared towards asp problems
+        handy : Use defaults geared towards large problems
+        crafty: Use defaults geared towards crafted problems
+        trendy: Use defaults geared towards industrial problems
+        many  : Use default portfolio to configure solver(s)
+        <file>: Use configuration file to configure solver(s)
+  --tester=<options>      : Pass (quoted) string of <options> to tester
+  --stats[={0..2}],-s     : Maintain {0=no|1=basic|2=extended} statistics
+  --share=<arg>|no        : Configure physical sharing of constraints [auto]
+      <arg>: {auto|problem|learnt|all}
+  --learn-explicit        : Do not use Short Implication Graph for learning
+
+  --sat-prepro[=<arg>|no] : Run SatELite-like preprocessing (Implicit: 2)
+      <arg>: <type>[,<limit>...(0=no limit)]
+        <type>: Run {1=VE|2=VE with BCE|3=BCE followed by VE}
+        <x1>  : Set iteration limit to <x1>           [0]
+        <x2>  : Set variable occurrence limit to <x2> [0]
+        <x3>  : Set time limit to <x3> seconds        [0]
+        <x4>  : Set frozen variables limit to <x4>%   [0]
+        <x5>  : Set clause limit to <x5>*1000      [4000]
+
+Clasp.Solving Options:
+
+  --solve-limit=<n>[,<m>] : Stop search after <n> conflicts or <m> restarts
+
+  --parallel-mode,-t <arg>: Run parallel search with given number of threads
+      <arg>: <n {1..64}>[,<mode {compete|split}>]
+        <n>   : Number of threads to use in search
+        <mode>: Run competition or splitting based search [compete]
+
+  --global-restarts[=<X>] : Configure global restart policy
+      <X>: <n>[,<sched>] / Implicit: 5
+        <n> : Maximal number of global restarts (0=disable)
+     <sched>: Restart schedule [x,100,1.5] (<type {F|L|x|+}>)
+
+  --dist-mode=<arg>       : Use {0=global|1=thread} distribution
+  --distribute=<arg>|no   : Configure nogood distribution [conflict,4]
+      <arg>: <type>[,<lbd {0..127}>][,<size>]
+        <type> : Distribute {all|short|conflict|loop} nogoods
+        <lbd>  : Distribute only if LBD  <= <lbd>  [4]
+        <size> : Distribute only if size <= <size> [-1]
+  --integrate=<arg>       : Configure nogood integration [gp]
+      <arg>: <pick>[,<n>][,<topo>]
+        <pick>: Add {all|unsat|gp(unsat wrt guiding path)|active} nogoods
+        <n>   : Always keep at least last <n> integrated nogoods   [1024]
+        <topo>: Accept nogoods from {all|ring|cube|cubex} peers    [all]
+
+  --enum-mode,-e <arg>    : Configure enumeration algorithm [auto]
+      <arg>: {bt|record|brave|cautious|auto}
+        bt      : Backtrack decision literals from solutions
+        record  : Add nogoods for computed solutions
+        domRec  : Add nogoods over true domain atoms
+        brave   : Compute brave consequences (union of models)
+        cautious: Compute cautious consequences (intersection of models)
+        auto    : Use bt for enumeration and record for optimization
+  --opt-mode=<mode>       : Configure optimization algorithm
+      <mode>: {opt|enum|optN|ignore}
+        opt   : Find optimal model
+        enum  : Find models with costs <= initial bound
+        optN  : Find optimum, then enumerate optimal models
+        ignore: Ignore optimize statements
+  --opt-bound=<opt>...|no : Initialize objective function(s)
+  --opt-sat               : Treat DIMACS input as MaxSAT optimization problem
+  --project[=<arg>]       : Project models to named atoms
+  --models,-n <n>         : Compute at most <n> models (0 for all)
+
+
+Clasp.ASP Options:
+
+  --supp-models           : Compute supported models (no unfounded set check)
+  --eq=<n>                : Configure equivalence preprocessing
+      Run for at most <n> iterations (-1=run to fixpoint)
+  --[no-]backprop         : Use backpropagation in ASP-preprocessing
+  --no-gamma              : Do not add gamma rules for non-hcf disjunctions
+  --eq-dfs                : Enable df-order in eq-preprocessing
+  --trans-ext=<mode>|no   : Configure handling of Lparse-like extended rules
+      <mode>: {all|choice|card|weight|integ|dynamic}
+        all    : Transform all extended rules to basic rules
+        choice : Transform choice rules, but keep cardinality and weight rules
+        card   : Transform cardinality rules, but keep choice and weight rules
+        weight : Transform cardinality and weight rules, but keep choice rules
+        scc    : Transform "recursive" cardinality and weight rules
+        integ  : Transform cardinality integrity constraints
+        dynamic: Transform "simple" extended rules, but keep more complex ones
+
+Clasp.Search Options:
+
+  --opt-strategy[=<arg>]  : Configure optimization strategy
+      <arg>: {bb|usc}[,<n>]
+        bb : branch and bound based optimization with <n = {0..3}>
+          1: hierarchical steps
+          2: exponentially increasing steps
+          3: exponentially decreasing steps
+        usc: unsatisfiable-core based optimization with <n = {0..7}>
+          1: disjoint-core preprocessing
+          2: implications instead of equivalences
+          4: clauses instead of cardinality constraints
+  --opt-heuristic[={0..3}]: Use opt. in {1=sign|2=model|3=both} heuristics
+  --restart-on-model      : Restart after each model
+
+  --lookahead[=<arg>|no]  : Configure failed-literal detection (fld)
+      <arg>: <type>[,<limit>] / Implicit: atom
+        <type> : Run fld via {atom|body|hybrid} lookahead
+        <limit>: Disable fld after <limit> applications ([0]=no limit)
+      --lookahead=atom is default if --no-lookback is used
+
+  --heuristic=<heu>       : Configure decision heuristic
+      <heu>: {Berkmin|Vmtf|Vsids|Domain|Unit|None}[,<n>]
+        Berkmin: Use BerkMin-like heuristic (Check last <n> nogoods [0]=all)
+        Vmtf   : Use Siege-like heuristic (Move <n> literals to the front [8])
+        Vsids  : Use Chaff-like heuristic (Use 1.0/0.<n> as decay factor  [95])
+        Domain : Use domain knowledge to Vsids-like heuristic
+        Unit   : Use Smodels-like heuristic (Default if --no-lookback)
+        None   : Select the first free variable
+  --[no-]init-moms        : Initialize heuristic with MOMS-score
+  --score-res=<n>         : Resolution score {0=default|1=min|2=set|3=multiset}
+  --score-other=<n>       : Score {0=no|1=loop|2=all} other learnt nogoods
+  --sign-def=<n>          : Default sign: {0=asp|1=pos|2=neg|3=rnd|4=disj}
+  --[no-]sign-fix         : Disable sign heuristics and use default signs only
+  --[no-]berk-huang       : Enable/Disable Huang-scoring in Berkmin
+  --[no-]nant             : In Unit count only atoms in NAnt(P)
+  --dom-mod=<arg>         : Default modification for domain heuristic
+      <arg>: <mod>[,<pick>]
+        <mod>  : Default modification {0=no|1=level|2=pos|3=true|4=neg|5=false}
+        <pick> : Apply <mod> to {0=all|1=scc|2=hcc|4=disj|8=min|16=show} atoms
+  --save-progress[=<n>]   : Use RSat-like progress saving on backjumps > <n>
+  --init-watches={0..2}   : Configure watched literal initialization [1]
+      Watch {0=first|1=random|2=least watched} literals in nogoods
+  --update-mode=<n>       : Process messages on {0=propagation|1=conflict)
+  --seed=<n>              : Set random number generator's seed to <n>
+  --partial-check[=<arg>] : Configure partial stability tests
+      <arg>: <p>[,<h>][,<x>] / Implicit: 50
+        <p>: Partial check percentage
+        <h>: Initial value for high bound (0 = umax)
+        <x>: Increase (1) or keep (0) high bound once reached
+  --rand-freq=<p>         : Make random decisions with probability <p>
+  --rand-prob[=<arg>|no]  : Configure random probing (Implicit: 10,100)
+      <arg>: <n1>[,<n2>]
+        Run <n1> random passes with at most <n2> conflicts each
+
+Clasp.Lookback Options:
+
+  --no-lookback           : Disable all lookback strategies
+
+  --forget-on-step=<bits> : Configure forgetting on (incremental) step
+      Forget {1=heuristic|2=signs|4=nogood activities|8=learnt nogoods}
+
+  --strengthen=<X>|no     : Use MiniSAT-like conflict nogood strengthening
+      <X>: <mode>[,<type>]
+        <mode>: Use {local|recursive} self-subsumption check
+        <type>: Follow {0=all|1=short|2=binary} antecedents  [0]
+  --otfs[={0..2}]         : Enable {1=partial|2=full} on-the-fly subsumption
+  --update-lbd[={0..3}]   : Update LBDs of learnt nogoods {1=<|2=strict<|3=+1<}
+  --update-act            : Enable LBD-based activity bumping
+  --reverse-arcs[={0..3}] : Enable ManySAT-like inverse-arc learning
+  --contraction=<arg>|no  : Configure handling of long learnt nogoods
+      <arg>: <n>[,<rep>]
+        <n>  : Contract nogoods if size > <n> (0=disable)
+        <rep>: Replace literal blocks with {1=decisions|2=uips} ([0]=disable)
+
+  --loops=<type>          : Configure learning of loop nogoods
+      <type>: {common|distinct|shared|no}
+        common  : Create loop nogoods for atoms in an unfounded set
+        distinct: Create distinct loop nogood for each atom in an unfounded set
+        shared  : Create loop formula for a whole unfounded set
+        no      : Do not learn loop formulas
+  --restarts,-r <sched>|no: Configure restart policy
+      <sched>: <type {D|F|L|x|+}>,<n {1..umax}>[,<args>][,<lim>]
+        F,<n>    : Run fixed sequence of <n> conflicts
+        L,<n>    : Run Luby et al.'s sequence with unit length <n>
+        x,<n>,<f>: Run geometric seq. of <n>*(<f>^i) conflicts  (<f> >= 1.0)
+        +,<n>,<m>: Run arithmetic seq. of <n>+(<m>*i) conflicts (<m {0..umax}>)
+        ...,<lim>: Repeat seq. every <lim>+j restarts           (<type> != F)
+        D,<n>,<f>: Restart based on moving LBD average over last <n> conflicts
+                   Mavg(<n>,LBD)*<f> > avg(LBD)
+                   use conflict level average if <lim> > 0 and avg(LBD) > <lim>
+      no|0       : Disable restarts
+  --reset-restarts[=0..2] : {0=Keep|1=Reset|2=Disable} restart seq. after model
+  --local-restarts        : Use Ryvchin et al.'s local restarts
+  --counter-restarts=<n>  : Do a counter implication restart every <n> restarts
+  --counter-bump=<n>      : Set CIR bump factor to <n>
+  --shuffle=<n1>,<n2>|no  : Shuffle problem after <n1>+(<n2>*i) restarts
+
+  --deletion,-d <arg>|no  : Configure deletion algorithm [basic,75,0]
+      <arg>: <algo>[,<n {1..100}>][,<sc>]
+        <algo>: Use {basic|sort|ipSort|ipHeap} algorithm
+        <n>   : Delete at most <n>% of nogoods on reduction    [75]
+        <sc>  : Use {0=activity|1=lbd|2=combined} nogood scores [0]
+      no      : Disable nogood deletion
+  --del-grow=<arg>|no     : Configure size-based deletion policy
+      <arg>: <f>[,<g>][,<sched>] (<f> >= 1.0)
+        <f>     : Keep at most T = X*(<f>^i) learnt nogoods with X being the
+                  initial limit and i the number of times <sched> fired
+        <g>     : Stop growth once T > P*<g> (0=no limit)      [3.0]
+        <sched> : Set grow schedule (<type {F|L|x|+}>) [grow on restart]
+  --del-cfl=<sched>|no    : Configure conflict-based deletion policy
+      <sched>:   <type {F|L|x|+}>,<args>... (see restarts)
+  --del-init=<arg>        : Configure initial deletion limit
+      <arg>: <f>[,<n>,<o>] (<f> > 0)
+        <f>    : Set initial limit to P=estimated problem size/<f> [3.0]
+        <n>,<o>: Clamp initial limit to the range [<n>,<n>+<o>]
+  --del-estimate[=0..3]   : Use estimated problem complexity in limits
+  --del-max=<n>,<X>       : Keep at most <n> learnt nogoods taking up to <X> MB
+  --del-glue=<arg>        : Configure glue clause handling
+      <arg>: <n {0..127}>[,<m {0|1}>]
+        <n>: Do not delete nogoods with LBD <= <n>
+        <m>: Count (0) or ignore (1) glue clauses in size limit [0]
+  --del-on-restart[=<n>]  : Delete <n>% of learnt nogoods on each restart
+
